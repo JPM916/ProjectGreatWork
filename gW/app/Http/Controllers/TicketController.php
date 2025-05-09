@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Http\Request;
+
 
 use App\Models\Ticket;
 use App\Http\Requests\StoreTicketRequest;
@@ -55,10 +57,17 @@ class TicketController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTicketRequest $request, Ticket $ticket)
-    {
-        //
-    }
+    public function updateStatus(Request $request, Ticket $ticket)
+{
+    $validated = $request->validate([
+        'status' => 'required|string|in:pending,ongoing,archived/delivered',
+    ]);
+
+    $ticket->update(['status' => $validated['status']]);
+
+    return redirect()->back()->with('success', 'Ticket status updated.');
+}
+
 
     /**
      * Remove the specified resource from storage.

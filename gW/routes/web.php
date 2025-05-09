@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return redirect()->route('login'); // Redirect to the login route
+    return redirect()->route('login');
 })->middleware('guest')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -41,6 +41,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/ticket', [TicketController::class, 'index'])->name('ticket.index');
     Route::resource('ticket', TicketController::class)->except('index');
 
+    // ✅ Fixed route for updating ticket status
+    Route::patch('/admin/tickets/{ticket}/status', [TicketController::class, 'updateStatus']);
+
     // Calendar Routes
     Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');
     Route::resource('calendar', CalendarController::class)->except('index');
@@ -53,17 +56,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/payment', [PaymentController::class, 'index'])->name('payment.index');
     Route::resource('payment', PaymentController::class)->except('index');
 
-    // User Management Routes
-    Route::get('/user', function () {
-        return Inertia::render('Admin/User/Index');
-    })->name('user.index');
+    // User Management
+    Route::get('/user', fn () => Inertia::render('Admin/User/Index'))->name('user.index');
 });
 
+// Settings Pages
 Route::prefix('settings')->group(function () {
     Route::get('profile', fn () => Inertia::render('Settings/Profile'));
     Route::get('password', fn () => Inertia::render('Settings/Password'));
     Route::get('appearance', fn () => Inertia::render('Settings/Appearance'));
 });
 
+// External route files
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

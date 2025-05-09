@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Ticket extends Model
 {
-    /** @use HasFactory<\Database\Factories\TicketFactory> */
     use HasFactory;
+
+    // Add 'status' to the fillable property
+    protected $fillable = ['name', 'ticket_number', 'category', 'location', 'concern', 'approved_by', 'status'];
 }
